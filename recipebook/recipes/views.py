@@ -19,7 +19,7 @@ def home(request):
             if login_form.is_valid():
                 user = login_form.get_user()
                 login(request, user)
-                return redirect('add_recipe')
+                return redirect('about')
 
         elif 'register_submit' in request.POST:
             register_form = UserRegisterForm(request.POST)
