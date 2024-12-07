@@ -58,3 +58,8 @@ def logout_view(request):
 def recipe_list(request):
     recipes = Recipe.objects.all()
     return render(request, 'recipes/recipeList.html', {'recipes': recipes})
+
+
+def user_dash(request):
+    user_recipes = Recipe.objects.filter(user=request.user)
+    return render(request, 'recipes/userDash.html', {'user_recipes': user_recipes})
