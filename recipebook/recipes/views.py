@@ -6,6 +6,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from .forms import UserRegisterForm, RecipeForm
 from django.contrib.auth.decorators import login_required
 
+from .models import Recipe
+
 
 def home(request):
     login_form = AuthenticationForm()
@@ -42,7 +44,7 @@ def add_recipe(request):
             recipe.save()
 
             messages.success(request, "Recipe was added!")
-            return redirect('home')
+            return redirect('recipe_list')
     else:
         form = RecipeForm()
 
@@ -51,3 +53,8 @@ def add_recipe(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+def recipe_list(request):
+    recipes = Recipe.objects.all()
+    return render(request, 'recipes/recipeList.html', {'recipes': recipes})
