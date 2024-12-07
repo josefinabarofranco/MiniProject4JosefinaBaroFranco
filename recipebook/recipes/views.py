@@ -32,19 +32,22 @@ def home(request):
     })
 
 
+@login_required
 def add_recipe(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = RecipeForm(request.POST)
         if form.is_valid():
-            form.save()
+            recipe = form.save(commit=False)
+            recipe.user = request.user
+            recipe.save()
+
+            messages.success(request, "Recipe was added!")
             return redirect('home')
     else:
         form = RecipeForm()
 
-    return render(request, 'recipes/addRecipe.html', {'form': form})
+    return render(request, "recipes/addRecipe.html", {'form': form})
 
-
-@login_required
 def logout_view(request):
     logout(request)
     return redirect('home')
