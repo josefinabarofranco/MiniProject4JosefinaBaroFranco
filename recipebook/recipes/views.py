@@ -1,5 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -26,7 +25,12 @@ def home(request):
             if register_form.is_valid():
                 register_form.save()
                 messages.success(request, f"Account was created for {register_form.cleaned_data['username']}")
-                return redirect('home')
+                registration_success = True
+                return render(request, 'recipes/home.html' ,
+                          {'login_form': login_form,
+                                'register_form': register_form,
+                                'registration_success': registration_success,
+                                 })
 
     return render(request, 'recipes/home.html', {
         'login_form': login_form,
@@ -54,16 +58,27 @@ def add_recipe(request):
 
     return render(request, "recipes/addRecipe.html", {'form': form})
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('home')
 
 
+@login_required
 def recipe_list(request):
     recipes = Recipe.objects.all()
     return render(request, 'recipes/recipeList.html', {'recipes': recipes})
 
 
+@login_required
 def user_dash(request):
     user_recipes = Recipe.objects.filter(user=request.user)
     return render(request, 'recipes/userDash.html', {'user_recipes': user_recipes})
+
+
+@login_required
+def delete_recipe(request, id):
+    recipe = get_object_or_404(Recipe, id=id, user=request.user)
+    recipe.delete()
+    messages.success(request, "Recipe was deleted!")
+    return redirect('user_dash')

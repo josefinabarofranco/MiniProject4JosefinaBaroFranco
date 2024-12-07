@@ -22,6 +22,10 @@
                             <strong>Instructions:</strong> {{ recipe.instructions|truncatewords:10 }}
                         </p>
                         <a href="#" class="btn btn-primary">View Details</a>
+                        <form action="{% url 'delete_recipe' recipe.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete Recipe</button>
+                        </form>
                     </div>
                 </div>
             </div>

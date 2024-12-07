@@ -13,4 +13,6 @@ urlpatterns = [
 
     path('about/', views.about, name='about'),
 
+    path('delete_recipe/<int:id>/', views.delete_recipe, name='delete_recipe'),
+
 ]
