@@ -1,22 +1,35 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import RecipeForm
+from .forms import UserRegisterForm, RecipeForm
 from django.contrib.auth.decorators import login_required
 
 
 def home(request):
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            return redirect('add_recipe')
-    else:
-        form = AuthenticationForm()
+    login_form = AuthenticationForm()
+    register_form = UserRegisterForm()
 
-    return render(request, 'recipes/home.html', {'form': form})
+    if request.method == "POST":
+        if 'login_submit' in request.POST:
+            login_form = AuthenticationForm(data=request.POST)
+            if login_form.is_valid():
+                user = login_form.get_user()
+                login(request, user)
+                return redirect('add_recipe')
+
+        elif 'register_submit' in request.POST:
+            register_form = UserRegisterForm(request.POST)
+            if register_form.is_valid():
+                register_form.save()
+                messages.success(request, f"Account was created for {register_form.cleaned_data['username']}")
+                return redirect('home')
+
+    return render(request, 'recipes/home.html', {
+        'login_form': login_form,
+        'register_form': register_form,
+    })
 
 
 def add_recipe(request):
