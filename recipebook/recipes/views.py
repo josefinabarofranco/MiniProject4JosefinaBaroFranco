@@ -34,6 +34,10 @@ def home(request):
     })
 
 
+def about(request):
+    return render(request, 'recipes/about.html')
+
+
 @login_required
 def add_recipe(request):
     if request.method == "POST":
